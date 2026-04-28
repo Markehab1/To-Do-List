@@ -255,7 +255,7 @@ ul li:not(:last-child)::after {
 }
 ul li::before{
   content: "";
-  background-image: url(/Images/unchecked.png);
+  background-image: url(Images/unchecked.png);
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -269,7 +269,7 @@ ul li::before{
 }
 .checked::before {
   content: "";
-  background-image: url(/Images/checked.png);
+  background-image: url( Images/checked.png);
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
