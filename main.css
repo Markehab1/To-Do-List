@@ -469,27 +469,20 @@ ul li.flipping {
   transform: scale(0.8) opacity(0);
   opacity: 0 !important;
   height: 0 !important;
-  /* margin: 0 !important; */
-  /* padding: 0 !important; */
   overflow: hidden !important;
   transition: all 0.4s ease-in-out !important;
 }
 
-/* ul li.last-visible::after {
-  display: none !important;
-} */
 
 
 ul li.hidden::after {
   display: none !important;
 }
 
-/* 1️⃣ إخفاء الخط فوراً من التاسك اللي بتتمسح أو بتتنقل */
 ul li.removing::after {
   display: none !important;
 }
 
-/* 2️⃣ تحديث السطر بتاعك عشان المتصفح يتجاهل التاسكات المخفية واللي في مرحلة الاختفاء كمان */
 ul li:not(:has(~ li:not(.hidden):not(.removing)))::after {
   display: none !important;
 }
@@ -503,7 +496,6 @@ ul li:not(:has(~ li:not(.hidden):not(.removing)))::after {
 @keyframes slideInTask {
   0% {
     opacity: 0;
-    /* حافظنا على الـ translateX(35px) بتاعك عشان الشكل ميبُظش */
     transform: translateY(-20px) translateX(35px) scale(0.9);
   }
   100% {
