@@ -66,11 +66,8 @@ input.addEventListener("keydown", function (e) {
 input.addEventListener("input", function () {
   erorrMsg.textContent = "";
 });
-document.querySelectorAll(".select p").forEach(p => {
-  p.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-  }, { passive: false });
-});
+
+
 
 // Move under line 
 function moveUnderlineTo(tabEl) {
@@ -144,13 +141,17 @@ function renderTask(taskObj) {
 
   li.classList.add("removing"); 
 
+  setTimeout(() => {
+      tasks = tasks.filter(t => t !== taskObj);
+      saveTasks();
+      li.remove();
+    }, 700);
+
   li.addEventListener("transitionend", () => {
     tasks = tasks.filter(t => t !== taskObj);
     saveTasks();
     li.remove();
-  }, { once: true });
-});
-}
+  }, { once: true });});
 
 window.addEventListener("DOMContentLoaded", function () {
   const storedTasks = localStorage.getItem("tasks");
@@ -162,4 +163,4 @@ window.addEventListener("DOMContentLoaded", function () {
       renderTask(task);
     });
   }
-});
+});}

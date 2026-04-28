@@ -14,7 +14,7 @@ body {
   align-items: center;
   background-attachment: fixed;
   color: white;
-  padding: 24px 0;
+  padding: 24px 0 80px 0;
 }
 .container {
   background-image : linear-gradient(to top, #1f1147 0%,#2a1856 40%,#38168e 100%);
@@ -199,16 +199,15 @@ body {
 }
 
 ul li:hover{
-  transform: scale(1.02);
   transition: 0.3s;
   box-shadow: 0px 0px 10px 0px #0091ff;
-  transform:translateX(42px);
+  transform: scale(1.02) translateX(42px);
   }
 ul li:hover:has(.delete-btn:hover) {
-  transform: none;
+  /* transform: none; */
   box-shadow: none;
-  width:84%;
-  transform:translate(30px,0px);
+  /* width:84%; */
+  transform:translate(30px);
   
 }
 
@@ -269,7 +268,7 @@ ul li::before{
 }
 .checked::before {
   content: "";
-  background-image: url( Images/checked.png);
+  background-image: url(Images/checked.png);
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -287,15 +286,32 @@ ul li::before{
   background-image: none;
 }
 
-ul li.removing{
-  transform: scale(0.85);
-  opacity: 0;
-  height: 0;
-  width: 0;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
+ul li.removing {
+  transform: perspective(600px) rotateX(90deg) scale(0.8) !important;
+  transform-origin: top; 
+  opacity: 0 !important;
+  
+  min-height: 0 !important;
+  height: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  
+  font-size: 0 !important;
+  color: transparent !important;
+  
+  transition: 
+    transform 0.4s ease-in, 
+    opacity 0.4s ease-in, 
+    min-height 0.3s ease 0.4s,
+    height 0.3s ease 0.4s,
+    padding 0.3s ease 0.4s, 
+    margin 0.3s ease 0.4s,
 }
+
 
 .select p{
   -webkit-user-select: none;
@@ -416,4 +432,24 @@ ul li.removing{
   img {
     display: none;
   }
+}
+
+
+footer {
+  position: fixed;
+  bottom: 0;
+  background-image: linear-gradient(to top, #1f1147 0%, #2a1856 100%);
+  width: 100%;
+  text-align: center;
+  padding: 18px 0;
+  z-index: 100;
+  left: 0;
+  box-shadow: 0px -5px 20px rgba(0, 0, 0, 0.4);
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.7);
+}
+.creator{
+  color: #71bffb;
+  font-weight: 800;
+  font-size: 18px;
 }
