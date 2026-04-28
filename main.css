@@ -360,7 +360,6 @@ ul li.removing {
 
   .delete-btn:hover {
     right: -50px !important;
-    width: 10% !important;
     box-shadow: none !important;
   }
 
@@ -416,9 +415,6 @@ ul li.removing {
     width: 35px !important;  
     height: 38px !important; 
     right: -50px;
-  }
-  .delete-btn:hover {
-    right:-50px;
   }
 
   .inputAndBtn button:hover,.inputAndBtn input:hover  {
