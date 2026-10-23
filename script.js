@@ -18,9 +18,10 @@ addBtn.addEventListener("click", function () {
   const taskObj = { text: task, completed: false };
   tasks.push(taskObj);
   saveTasks();
-  renderTask(taskObj);  
+  renderTask(taskObj);
   input.value = "";
   tabAll.click();
+  ul.scrollTo({ top: ul.scrollHeight, behavior: "smooth" });
 });
 
 input.addEventListener("keydown", function (e) {
@@ -35,15 +36,18 @@ input.addEventListener("input", function () {
 
 
 
-// Move under line 
+// Move under line
 function moveUnderlineTo(tabEl) {
   const parentRect = selectBox.getBoundingClientRect();
-  const tabRect = tabEl.getBoundingClientRect();
+  const range = document.createRange();
+  range.selectNodeContents(tabEl);
+  const contentRect = range.getBoundingClientRect();
 
-  const x = tabRect.left - parentRect.left + (tabRect.width / 2) - 30;
-  const w = tabRect.width;
+  const x = contentRect.left - parentRect.left;
+  const w = contentRect.width;
 
   selectBox.style.setProperty("--x", `${x}px`);
+  selectBox.style.setProperty("--w", `${w}px`);
 }
 
 
@@ -66,6 +70,11 @@ window.addEventListener("load", () => {
   setActiveTab(current);
 });
 
+document.fonts.ready.then(() => {
+  const current = document.querySelector(".select .tab.active") || tabAll;
+  moveUnderlineTo(current);
+});
+
 window.addEventListener("resize", () => {
   const current = document.querySelector(".select .tab.active") || tabAll;
   moveUnderlineTo(current);
@@ -85,6 +94,11 @@ function renderTask(taskObj) {
   const span = document.createElement("span");
   span.textContent = taskObj.text;
 
+  const editBtn = document.createElement("button");
+  editBtn.textContent = "✎";
+  editBtn.classList.add("edit-btn");
+  editBtn.setAttribute("aria-label", "Edit task");
+
   const deleteBtn = document.createElement("button");
   deleteBtn.textContent = "✖";
   deleteBtn.classList.add("delete-btn");
@@ -93,6 +107,7 @@ function renderTask(taskObj) {
 
 
   li.append(span);
+  li.append(editBtn);
   li.append(deleteBtn);
   ul.append(li);
 
@@ -104,21 +119,95 @@ function renderTask(taskObj) {
     li.classList.add("checked");
   }
 
+let clickTimer;
+
 li.addEventListener("click", function () {
-  li.classList.toggle("checked");
-  const isChecked = li.classList.contains("checked");
-  taskObj.completed = isChecked;
-  saveTasks();
+  clearTimeout(clickTimer);
+  clickTimer = setTimeout(() => {
+    li.classList.toggle("checked");
+    const isChecked = li.classList.contains("checked");
+    taskObj.completed = isChecked;
+    saveTasks();
 
-  const activeTabId = document.querySelector(".select .tab.active").id;
+    const activeTabId = document.querySelector(".select .tab.active").id;
 
-  filterTasks(activeTabId);
+    filterTasks(activeTabId);
+  }, 250);
+});
+
+function startEdit() {
+  if (li.querySelector(".edit-input")) return;
+  clearTimeout(clickTimer);
+
+  const editInput = document.createElement("input");
+  editInput.type = "text";
+  editInput.value = taskObj.text;
+  editInput.classList.add("edit-input");
+
+  const saveBtn = document.createElement("button");
+  saveBtn.textContent = "Save";
+  saveBtn.classList.add("save-btn");
+  saveBtn.setAttribute("aria-label", "Save task");
+  let finished = false;
+
+  function finishEdit(save) {
+    if (finished) return;
+    if (save) {
+      const newText = editInput.value.trim();
+      if (newText === "") return;
+      taskObj.text = newText;
+      span.textContent = newText;
+      saveTasks();
+    }
+    finished = true;
+    editInput.replaceWith(span);
+    saveBtn.remove();
+  }
+
+  editInput.addEventListener("click", function (e) {
+    e.stopPropagation();
+  });
+
+  editInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      finishEdit(true);
+    } else if (e.key === "Escape") {
+      finishEdit(false);
+    }
+  });
+
+  editInput.addEventListener("blur", function (e) {
+    if (e.relatedTarget === saveBtn) return;
+    finishEdit(false);
+  });
+
+  saveBtn.addEventListener("mousedown", function (e) {
+    e.preventDefault();
+  });
+
+  saveBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    finishEdit(true);
+  });
+
+  span.replaceWith(editInput);
+  editInput.after(saveBtn);
+  editInput.focus();
+}
+
+span.addEventListener("dblclick", startEdit);
+
+editBtn.addEventListener("click", function (e) {
+  e.stopPropagation();
+  startEdit();
 });
 
 
   deleteBtn.addEventListener("click", function (e) {
     e.stopPropagation();
-    li.classList.add("removing"); 
+    li.isDeleting = true;
+    clearTimeout(li.filterTimer);
+    li.classList.add("removing");
 
     setTimeout(() => {
       tasks = tasks.filter(t => t !== taskObj);
@@ -140,32 +229,40 @@ window.addEventListener("DOMContentLoaded", function () {
 function filterTasks(tabId) {
   const allLi = document.querySelectorAll("ul li");
   allLi.forEach(li => {
+    if (li.isDeleting) return;
+
     const isChecked = li.classList.contains("checked");
-    
+
     let shouldBeVisible = false;
-    
+
     if (tabId === "tabAll") {
-      shouldBeVisible = !isChecked; 
+      shouldBeVisible = !isChecked;
     } else if (tabId === "tabDone") {
       shouldBeVisible = isChecked;
     }
-    const isCurrentlyVisible = !li.classList.contains("hidden");
-    
-    if (shouldBeVisible && !isCurrentlyVisible) {
-      li.classList.remove("hidden"); 
-      li.classList.add("task-enter"); 
-      
-      setTimeout(() => {
-        li.classList.remove("task-enter"); 
+    const isHidden = li.classList.contains("hidden");
+    const isHiding = li.classList.contains("removing");
+
+    // Cancel any hide/show still waiting from a previous click
+    clearTimeout(li.filterTimer);
+
+    if (shouldBeVisible && (isHidden || isHiding)) {
+      li.classList.remove("hidden", "removing", "task-enter");
+      void li.offsetWidth; // restart the enter animation
+      li.classList.add("task-enter");
+
+      li.filterTimer = setTimeout(() => {
+        li.classList.remove("task-enter");
       }, 400);
-    } 
-    else if (!shouldBeVisible && isCurrentlyVisible) {
-      li.classList.add("removing"); 
-      
-      setTimeout(() => {
-        li.classList.add("hidden"); 
-        li.classList.remove("removing"); 
-      }, 700); 
+    }
+    else if (!shouldBeVisible && !isHidden) {
+      li.classList.remove("task-enter");
+      li.classList.add("removing");
+
+      li.filterTimer = setTimeout(() => {
+        li.classList.add("hidden");
+        li.classList.remove("removing");
+      }, 700);
     }
   });
 }
