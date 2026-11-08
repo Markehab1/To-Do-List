@@ -80,6 +80,23 @@ window.addEventListener("resize", () => {
   moveUnderlineTo(current);
 });
 
+// Theme
+const themeBtn = document.querySelector("#themeBtn");
+
+function updateThemeLabel() {
+  const isDark = document.documentElement.dataset.theme === "dark";
+  themeBtn.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+}
+
+themeBtn.addEventListener("click", function () {
+  const theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = theme;
+  localStorage.setItem("todo.theme", theme);
+  updateThemeLabel();
+});
+
+updateThemeLabel();
+
 // Local Storage
 
 

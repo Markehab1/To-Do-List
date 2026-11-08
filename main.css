@@ -15,6 +15,8 @@
   --border-strong: #D1D5DB;
   --danger: #DC2626;
   --danger-soft: #FEF2F2;
+  --primary-on-soft: #4F46E5;
+  --footer-bg: rgba(255, 255, 255, 0.85);
 
   --heart: #E11D48;
 
@@ -48,6 +50,7 @@ body {
 }
 .container {
   background-color: var(--card);
+  position: relative;
   width: min(100%, 640px);
   max-height: calc(100vh - var(--page-top) - var(--page-bottom));
   max-height: calc(100dvh - var(--page-top) - var(--page-bottom));
@@ -84,6 +87,70 @@ body {
 }
 .container h1 img {
   width: 26px;
+}
+
+/*----------------- Theme: Dark (same names, new values) ---------------*/
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0F1117;
+  --card: #181B24;
+  --primary: #5B5EF0;
+  --primary-hover: #4F46E5;
+  --primary-soft: #272A4A;
+  --primary-ring: rgba(129, 140, 248, 0.35);
+  --primary-on-soft: #C7D2FE;
+  --text: #F3F4F6;
+  --muted: #A1A8B5;
+  --completed: #9CA3AF;
+  --completed-bg: #14171F;
+  --border: #2A2E3A;
+  --border-strong: #3D4351;
+  --danger: #F87171;
+  --danger-soft: rgba(248, 113, 113, 0.14);
+  --heart: #FB7185;
+  --footer-bg: rgba(24, 27, 36, 0.85);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+/*----------------- Theme button ---------------*/
+
+.theme-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: var(--muted);
+  background-color: transparent;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.theme-btn:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+.theme-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.theme-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.icon-sun {
+  display: none;
+}
+[data-theme="dark"] .icon-sun {
+  display: block;
+}
+[data-theme="dark"] .icon-moon {
+  display: none;
 }
 
 /*----------------- Add task ---------------*/
@@ -310,7 +377,7 @@ ul li.checked::before {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 .edit-btn:hover {
-  color: var(--primary);
+  color: var(--primary-on-soft);
   background-color: var(--primary-soft);
 }
 .delete-btn:hover {
@@ -391,7 +458,7 @@ footer {
   font-size: 14px;
   color: var(--muted);
   white-space: nowrap;
-  background-color: rgba(255, 255, 255, 0.85);
+  background-color: var(--footer-bg);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border: 1px solid var(--border);
@@ -411,7 +478,7 @@ footer {
   gap: 6px;
   padding: 6px 12px;
   font-weight: 600;
-  color: var(--primary);
+  color: var(--primary-on-soft);
   background-color: var(--primary-soft);
   border-radius: 999px;
   text-decoration: none;
